@@ -1,0 +1,12 @@
+.admin{
+    display: flex;
+    gap: 200px;
+    justify-content: center;
+    margin-top: 20px;
+    border: 1px solid rgb(162, 213, 162);
+    border-radius: 30px;
+    background-color:  rgb(162, 213, 162);
+    height: 30px;
+    text-align: center;
+    align-items: center;
+}

@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;600&display=swap");
+.App {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Quicksand", sans-serif;
+}
+:root {
+  --white-color: #fff;
+  --black-color: #000;
+  --text-color: #282828;
+  --primary-color: #4d8a54;
+  --border-color: #dbdbdb;
+  --soft-color: #fdede9;
+  --star-gold: #ffce3e;
+  --navbar-height: 45px;
+  --header-height: 170px;
+}
+.product--content {
+  margin: 100px 0;
+}
