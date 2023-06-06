@@ -36,7 +36,7 @@ const onSubmit = async (data)=>{
   console.log(data);
   
   
-  await axios.post('https://vercel.com/binhan1610/be-nodejs/login',data,{
+  await axios.post('https://be-nodejs-two.vercel.app/login',data,{
     headers: {
         'Access-Control-Allow-Origin': '*'
     }

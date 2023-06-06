@@ -19,7 +19,7 @@ function Signup() {
       username:data.username,
       password:data.password
     }
-    axios.post(`https://vercel.com/binhan1610/be-nodejs/register`, user,{
+    axios.post(`https://be-nodejs-two.vercel.app/register`, user,{
       headers: {
           'Access-Control-Allow-Origin': '*'
       }
