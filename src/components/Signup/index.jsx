@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {Modal } from 'react-bootstrap';
 import axios from "axios";
@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
   
 function Signup() {
+  const Navigate=useNavigate()
   const {
     register,
     handleSubmit,
@@ -19,13 +20,14 @@ function Signup() {
       username:data.username,
       password:data.password
     }
-    axios.post(`https://be-nodejs-two.vercel.app/register`, user,{
+    axios.post(`http://localhost:3001/register`, user,{
       headers: {
           'Access-Control-Allow-Origin': '*'
       }
   })
     .then(response => {
       console.log(response.data)
+      Navigate("/")
     })
     .catch(error => {
       console.error(error)

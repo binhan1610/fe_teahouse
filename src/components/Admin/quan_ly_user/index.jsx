@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { toast } from "react-toastify";
+import axios from "axios";
+import { Link } from "react-router-dom";
 function AdminUser() {
   const [usercorrec, setUsercorrec] = useState({});
   const [correc, setCorrec] = useState({
@@ -37,15 +39,22 @@ function AdminUser() {
     toast.success("xóa thành công")
   };
   useEffect(() => {
-    setPerson(
-      localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user"))
-        : []
-    );
+    const getuser=async()=>{
+      const {data}=await axios.get("http://localhost:3001/users", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      setPerson(data)
+    }
+getuser()
   }, []);
+  console.log(person);
   return (
-    <div>
-      {person.length === 0 ? (
+    <div style={{display:"flex",gap:"30px"}}>
+      <Link style={{textDecoration:"none"}} to={"/admin"}>Back</Link >
+      <Link style={{textDecoration:"none"}} to={"/"}>Home</Link>
+      {person&&person.length === 0 ? (
         <h1>No User</h1>
       ) : (
         <table className="table">
@@ -53,16 +62,15 @@ function AdminUser() {
             <tr>
               <td>Id</td>
               <td>Username</td>
-              <td>Password</td>
+              <td>Chức năng</td>
               <td>Chức năng</td>
             </tr>
           </thead>
           <tbody>
-            {person.map((user, index) => (
-              <tr key={index}>
+            {person.map((user,index) => (
+              <tr key={user._id}>
                 <td>{index}</td>
                 <td>{user.username}</td>
-                <td>{user.password}</td>
                 <td>
                   <Button onClick={() => deleteuser(user.username)}>
                     delete

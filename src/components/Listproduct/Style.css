@@ -1,0 +1,72 @@
+.Menu-item {
+    max-width: 1140px;
+    margin: auto;
+    margin-bottom: 100px;
+  }
+  .check-list {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 26px;
+    font-weight: 600;
+  }
+  .check-list li {
+    padding: 16px 26px;
+    border: 1px solid #dbdbdb;
+    border-radius: 30px;
+    cursor: pointer;
+  }
+  .check-list li:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+  .active {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+  .list-tea {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    justify-content: space-evenly;
+  }
+  .box-tea .img-tea {
+    width: 260px;
+    border: 1px solid #ebebeb;
+    margin-bottom: 20px;
+    
+  }
+  .img-tea img {
+    width: 100%;
+    cursor:pointer;
+    /* object-fit: cover; */
+  }
+  .box-tea {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .tea-info {
+    font-weight: 600;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .info-left{
+    text-align: center;
+  }
+  .shopping-cart-button {
+    color: #4d8a54;
+    cursor: pointer;
+    font-size: 22px;
+  }
+  .shopping-cart-button:active{
+    transform: translateY(2px);
+  }
+  .img-tea:hover img {
+    transform: scale(1.1);
+    transition: 0.4s ease-in-out;
+  }

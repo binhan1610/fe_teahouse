@@ -13,8 +13,10 @@ import Logo from '../../../assets/img/title_base.webp'
 import IconAboutUs1 from '../../../assets/img/about-icon-1.webp'
 import IconAboutUs2 from '../../../assets/img/about-icon-2.webp'
 import IconAboutUs3 from '../../../assets/img/about-icon-3.webp'
+import { useNavigate } from 'react-router-dom'
 
 const Intro = () => {
+
   return (
     <div>
       <div className="slider">

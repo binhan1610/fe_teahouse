@@ -6,35 +6,57 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { toast } from "react-toastify";
+import axios from "axios";
+import { Link } from "react-router-dom";
+
 function AdminProduct() {
   const [productcorrec, setProductcorrec] = useState({});
   const [correc, setCorrec] = useState({
-    image: "",
+    img: "",
     title: "",
-    type: "",
+    type: "HotTea",
     price: "",
-    id: "",
+    _id:""
   });
   const [show, setShow] = useState(false);
   const [showadd, setShowadd] = useState(false);
   const [listproduct, setListProduct] = useState([]);
   const [product, setProduct] = useState({
-    image: "",
+    img: "",
     title: "",
-    type: "",
+    type: "HotTea",
     price: "",
-    id: parseInt(Date.now()),
+    
   });
-  const save = () => {
-    if (!correc.image || !correc.title||!correc.price) return toast.error("nhập đầy đủ thông tin");
-    toast.success("sửa thành công")
-    const indexcorrec = listproduct.findIndex(
-      (el) => el.id === productcorrec.id
-    );
-    listproduct.splice(indexcorrec, 1, correc);
-    localStorage.setItem("product", JSON.stringify(listproduct));
-    setListProduct(listproduct);
-    setShow(false);
+  const save =  async() => {
+    console.log(correc);
+    if (!correc.img || !correc.title||!correc.price) return toast.error("nhập đầy đủ thông tin");
+    await axios.put("http://localhost:3001/product",correc,{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }).then(async response=>{
+      if(response.data){
+        toast.success("sửa thành công")
+        setShow(false);
+        setCorrec({
+          img: "",
+          title: "",
+          type: "HotTea",
+          price: "",
+          _id:""
+        })
+        const {data}=await axios.get("http://localhost:3001/product", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        setListProduct(data)
+      }
+    }).catch(error=>{
+      console.error(error);
+    })
+    
   };
   const handleClose = () => {
     setShow(false);
@@ -43,38 +65,79 @@ function AdminProduct() {
   const handsave = (el) => {
     setProductcorrec(el);
     // setCorrec((prev) => ({ ...prev, id: el.id }));
-    setCorrec({ ...correc, id: el.id });
+    setCorrec({ ...correc, _id: el._id });
     setShow(true);
   };
   const add = () => {
     setShowadd(true);
   };
-  const handeradd = (el) => {
-    if (!product.image || !product.title||!product.price) return toast.error("nhập đầy đủ thông tin");
-    toast.success("thêm thàng công")
-    setProduct({ ...product, id: parseInt(Date.now()) });
-    setListProduct([...listproduct, product]);
-    localStorage.setItem("product", JSON.stringify([...listproduct, product]));
+  const handeradd = async (el) => {
+    console.log(product);
+    if (!product.img || !product.title||!product.price) return toast.error("nhập đầy đủ thông tin");
+    await axios.post("http://localhost:3001/product",product, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }).then(async response=>{
+      console.log(response.data);
+      if(response.data){
+        toast.success("Thêm thành công")
+        setShowadd(false)
+        setProduct({
+          img: "",
+          title: "",
+          type: "HotTea",
+          price: "",
+          
+        })
+        const {data}=await axios.get("http://localhost:3001/product", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        setListProduct(data)
+      }
+    })
+     .catch(error=>{
+      console.error(error);
+     })
+   
   };
-  const handerdelete = (id) => {
-    const productdelete = listproduct.filter((el) => el.id !== id);
-    localStorage.setItem("product", JSON.stringify(productdelete));
-    setListProduct(productdelete);
-    toast.success("xóa thành công")
+  const handerdelete = async (el) => {
+    console.log(el);
+    await axios.post(`http://localhost:3001/product/delete`,el,{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }).then( async response=>{
+      if( response){
+        toast.success("xóa thành công")
+         const {data}=await axios.get("http://localhost:3001/product")
+        setListProduct(data)
+      }
+    }).catch(error=>{
+      console.error(error);
+    })
   };
   useEffect(() => {
     setCorrec({
-      image: "",
+      img: "",
       title: "",
-      type: "",
+      type: "HotTea",
       price: "",
-      id: "",
+      _id:""
     });
-    setListProduct(
-      localStorage.getItem("product")
-        ? JSON.parse(localStorage.getItem("product"))
-        : []
-    );
+      axios.get("http://localhost:3001/product", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then(respone=>{
+        setListProduct(respone.data)
+      })
+      .catch(error=>{
+        console.error(error);
+      })
   }, []);
   return (
     <div>
@@ -85,12 +148,15 @@ function AdminProduct() {
           justifyContent: "center",
           alignItems: "center",
           textAlign: "center",
+          marginTop:"30px"
         }}
         onClick={add}
       >
         ADD
       </Button>
-      {listproduct.length > 0 ? (
+      <Link to={"/"} style={{textDecoration:"none",color:"green",marginRight:"30px"}}>Home</Link>
+      <Link to={"/admin"} style={{textDecoration:"none",color:"green"}}>Back</Link>
+      {listproduct ? (
         <table className="table" >
           <thead>
             <tr>
@@ -105,10 +171,10 @@ function AdminProduct() {
           </thead>
           <tbody>
             {listproduct.map((el, index) => (
-              <tr key={el.id}>
-                <td>{el.id}</td>
+              <tr key={el._id}>
+                <td>{el._id}</td>
                 <td>
-                  <img style={{width:"200px"}} src={el.image} alt=""></img>
+                  <img style={{width:"200px",height:"250px"}} src={el.img} alt=""></img>
                 </td>
                 <td>{el.title}</td>
                 <td>{el.type}</td>
@@ -119,7 +185,7 @@ function AdminProduct() {
                   </Button>
                 </td>
                 <td>
-                  <Button variant="primary" onClick={() => handerdelete(el.id)}>
+                  <Button variant="primary" onClick={() => handerdelete(el)}>
                     delete
                   </Button>
                 </td>
@@ -128,7 +194,7 @@ function AdminProduct() {
           </tbody>
         </table>
       ) : (
-        <h1>No Product</h1>
+        <h1 style={{paddingTop:"32px"}}>No Product</h1>
       )}
       {/* /======modal save=====/ */}
       <Modal show={show} onHide={handleClose}>
@@ -143,7 +209,7 @@ function AdminProduct() {
                 autoFocus
                
                 onChange={(el) =>
-                  setCorrec({ ...correc, image: el.target.value })
+                  setCorrec({ ...correc, img: el.target.value })
                 }
               />
             </Form.Group>
@@ -206,7 +272,7 @@ function AdminProduct() {
               <Form.Control
                 autoFocus
                 onChange={(el) =>
-                  setProduct({ ...product, image: el.target.value })
+                  setProduct({ ...product, img: el.target.value })
                 }
               />
             </Form.Group>

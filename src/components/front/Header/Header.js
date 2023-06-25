@@ -9,11 +9,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-const Header = ({success,setSuccess}) => {
-  
+import { useNavigate } from 'react-router-dom'
+import {BsFillBasketFill} from "react-icons/bs"
+const Header = ({success,setSuccess,token,setToken}) => {
+  const navigate=useNavigate()
   const [show,setShow]=useState(true)
   const [displayACcount, setDisplayACcount] = useState(false)
   const [name,setName]=useState()
+  const [role,setRole]=useState()
   const {
     register,
     handleSubmit,
@@ -26,36 +29,53 @@ const handersignin=()=>{
   setDisplayACcount(false)
 
 }
-const handerout=()=>{
-  setSuccess(false)
-  toast.success(`xin hẹn gặp lại ${name}`)
-  localStorage.removeItem("token")
+const handerout=async()=>{
+  await axios.get('http://localhost:3001/logout',{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  })
+  .then(response=>{
+    if(response.data){
+      setSuccess(false)
+      setRole(null)
+      localStorage.removeItem("token")
+      localStorage.removeItem("role")
+      localStorage.removeItem("users")
+
+    }
+  })
 }
 
 const onSubmit = async (data)=>{
   console.log(data);
   
   
-  await axios.post('https://be-nodejs-two.vercel.app/login',data,{
-    headers: {
-        'Access-Control-Allow-Origin': '*'
-    }
-})
+  await axios.post('http://localhost:3001/login',data)
   .then(response => {
     console.log(response.data)
-      if(response.data)
-      {
-        localStorage.setItem('token',response.data)
+      if(response.data.token)
+      { 
+        setRole(response.data.user.role)
+        localStorage.setItem('role',response.data.user.role)
+        setToken(response.data.token)
+        localStorage.setItem('token',response.data.token)
         setSuccess(true)
+        localStorage.setItem('success',true)
         setShow(false)
-        setName(data.username)
+        setName(response.data.user.username)
+        localStorage.setItem('users',response.data.user.username)
       }
-  
+      else{
+        toast.error("Xem lại tài khoản hoặc mật khẩu")
+      }
+      console.log(token);
   })
   .catch(error => {
     console.error(error);
   });
 }
+
 const handleScroll = () => {
   const header = document.querySelector(".header-top");
   if (window.scrollY > 0) {
@@ -65,13 +85,25 @@ const handleScroll = () => {
     header.classList.remove("active");
   }}
 useEffect(()=>{
-  // const token=localStorage.getItem('token')
-  // if(token) setLogIn(true)
-  // else setLogIn(false)
+  console.log(localStorage.getItem('token'));
+  const savetoken=localStorage.getItem('token')
+  if(savetoken) {
+    setSuccess(true)
+    setToken(localStorage.getItem("token"))
+    setShow(false)
+    setName(localStorage.getItem("users"))
+    setRole(localStorage.getItem("role"))
+  }
+  else {
+    setSuccess(false)
+    setToken(null)
+    setRole(null)
+  }
   window.addEventListener("scroll", handleScroll);
   return () => {
     window.removeEventListener("scroll", handleScroll);}
 },[])
+console.log(role);
   return (
     <div className='header'>
 
@@ -79,7 +111,9 @@ useEffect(()=>{
         <div className='header-number'>
           <p style={{color:"white"}}>HOTLINE : 1900 1234</p>
         </div>  
-        <h2 className="anfood" style={{fontFamily:"cursive"}}>
+        <h2 className="anfood" style={{fontFamily:"cursive"}} onClick={()=>{
+            navigate("/")
+        }}>
         <img src={Logo}/>
       </h2>
 
@@ -88,11 +122,18 @@ useEffect(()=>{
         {success?(<div >
           <p style={{color:"white"}}>Xin chào {name}</p>
           <p style={{color:"white"}} onClick={handerout}>Đăng xuất</p>
-          
+
         </div>):(
           <p style={{color:"white"}} onClick={() => setDisplayACcount(!displayACcount)}><FaUserAlt style={{ 'padding': '0 5px 3px 0', 'fontSize': '20px' }} />Tài Khoản</p>
         )}
           </div>
+          <div>
+
+          </div>
+         <div style={{display:"flex",justifyContent:"space-around"}}>
+         {success&&(<Link to={"/cart"} style={{"fontSize":"30px",color:"white",marginRight:"10px"}} ><BsFillBasketFill/></Link>)}
+         {role==="admin"&&<Link style={{textDecoration:"none",fontSize:"20px"}} to={"/admin"}><p style={{color:"white"}} >Admin</p></Link>}
+         </div>
           {displayACcount && (
             <div className='header-sign'>
               
